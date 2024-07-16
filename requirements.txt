@@ -1,5 +1,6 @@
 #pyrogram==2.0.106
 git+https://github.com/TheBlackxyz/pyrofork
+git+https://github.com/TheBlackxyz/cinemagoer
 tgcrypto==1.2.5
 aiofiles==22.1.0     
 aiohttp==3.8.3
@@ -13,8 +14,8 @@ motor==3.0.0
 youtube-search-python
 youtube-search
 yt-dlp==2023.2.17
-cinemagoer==2023.5.1
-opencv-python-headless==4.7.0.68
+#cinemagoer==2023.5.1
+#opencv-python-headless==4.7.0.68
 googletrans==3.1.0a0
 telegraph==2.2.0
 gTTS==2.3.1
