@@ -3,7 +3,7 @@
 ![Typing SVG](https://readme-typing-svg.herokuapp.com/?lines=𝗧𝗛𝗜𝗦+𝗜𝗦+𝗧𝗵𝗲𝗕𝗹𝗮𝗰𝗸𝗕𝗼𝘁+𝐁𝐎𝐓!;𝗖𝗕𝗥𝗘𝗔𝗧𝗘𝗗+𝗕𝗬+𝗧𝗵𝗲𝗕𝗹𝗮𝗰𝗸𝗫𝗬𝗭;𝗔+𝗣𝗢𝗪𝗘𝗥𝗙𝗨𝗟𝗟+𝗔𝗨𝗧𝗢𝗙𝗜𝗟𝗧𝗘𝗥+𝗕𝗢𝗧!)</p> 
 
 <p align="center">
-<img src="https://graph.org/file/003a951cb93ddec63b8bf.jpg" alt="TheBlackBot Logo"> 
+<img src="https://graph.org/file/bb8f769a61e1b0703aed3.jpg" alt="TheBlackBot Logo"> 
 </p>
 
 <p align="center">
@@ -113,6 +113,7 @@ ban_user  - to ban a user.
 unban_user  - to unban a user.
 channel - to get list of total connected channels
 broadcast - to broadcast a message to all Eva Maria users
+
 ```
 
 
