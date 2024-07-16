@@ -1,10 +1,10 @@
 if [ -z $UPSTREAM_REPO ]
 then
   echo "Cloning main Repository"
-  git clone https://github.com/TheBlackxyz/TheBlackBot.git /Auto-search-tamil-bot
+  git clone https://github.com/TheBlackxyz/TheBlackBot.git /TheBlackBot
 else
   echo "Cloning Custom Repo from $UPSTREAM_REPO "
-  git clone $UPSTREAM_REPO /Auto-search-tamil-bot
+  git clone $UPSTREAM_REPO /TheBlackBot
 fi
 cd /TheBlackBot
 pip3 install -U -r requirements.txt
