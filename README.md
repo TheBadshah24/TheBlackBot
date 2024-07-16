@@ -87,6 +87,7 @@
 
 
 <summary><b>Basic Commands</b></summary>
+
 ```
 start - check bot alive
 settings - get settings 
@@ -113,10 +114,7 @@ ban_user  - to ban a user.
 unban_user  - to unban a user.
 channel - to get list of total connected channels
 broadcast - to broadcast a message to all Eva Maria users
-
 ```
-
-
 
 # SUPPORT PLEASE 🥺🥺❤️
 </p>
