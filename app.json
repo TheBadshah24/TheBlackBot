@@ -166,10 +166,6 @@
             "value": "True",
             "required": true 
         },
-        "RemoveBG_API": {
-            "description": "background remover website api key. get from https://www.remove.bg/b/background-removal-api",
-            "required": true 
-        },
         "P_TTI_SHOW_OFF": { 
             "description": "Customize Result Buttons to Callback or Url by (True = url / False = callback)",
             "value": "True",
