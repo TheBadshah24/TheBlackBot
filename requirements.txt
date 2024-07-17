@@ -1,5 +1,5 @@
 git+https://github.com/TheBlackxyz/cinemagoer
-pyrofork
+pyrogram==2.0.106
 tgcrypto 
 requests 
 bs4 
