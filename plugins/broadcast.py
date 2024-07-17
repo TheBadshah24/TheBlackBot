@@ -75,46 +75,35 @@ async def remove_junkuser__db(bot, message):
     await sts.delete()
     await bot.send_message(message.chat.id, f"Completed:\nCompleted in {time_taken} seconds.\n\nTotal Users {total_users}\nCompleted: {done} / {total_users}\nBlocked: {blocked}\nDeleted: {deleted}")
 
+#_________________________________________________________________________________________#
 
-@Client.on_message(filters.command("group_broadcast") & filters.user(ADMINS) & filters.reply)
+
+@Client.on_message(filters.command("grp_broadcast") & filters.user(ADMINS))
 async def broadcast_group(bot, message):
+    b_msg = await bot.ask(chat_id = message.from_user.id, text = "Now Send Me Your Broadcast Message")
     groups = await db.get_all_chats()
-    b_msg = message.reply_to_message
-    sts = await message.reply_text(text='Broadcasting your messages To Groups...')
+    sts = await message.reply_text(
+        text='Broadcasting your messages To Groups...'
+    )
     start_time = time.time()
     total_groups = await db.total_chat_count()
     done = 0
     failed = 0
-    Blocked = 0
-    deleted = 0
-        
+
+    success = 0
     async for group in groups:
-        pti, sh, ex = await broadcast_messages_group(int(group['id']), b_msg)
-        if pti == True:
-            if sh == "Blocked":
-                success += 1
-        elif pti == False:
-            if sh == "Deleted":
-                deleted+=1 
-                failed += ex 
-                try:
-                    await bot.leave_chat(int(group['id']))
-                except Exception as e:
-                    print(f"{e} > {group['id']}")  
+        pti, sh = await broadcast_messages_group(int(group['id']), b_msg)
+        if pti:
+            success += 1
+        elif sh == "Error":
+                failed += 1
         done += 1
         if not done % 20:
-            await sts.edit(f"Broadcast in progress:\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}")    
+            await sts.edit(f"Broadcast in progress:\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}")    
     time_taken = datetime.timedelta(seconds=int(time.time()-start_time))
-    await sts.delete()
-    try:
-        await message.reply_text(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}\n\nFiled Reson:- {failed}")
-    except MessageTooLong:
-        with open('reason.txt', 'w+') as outfile:
-            outfile.write(failed)
-        await message.reply_document('reason.txt', caption=f"Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}\nDeleted: {deleted}")
-        os.remove("reason.txt")
+    await sts.edit(f"Broadcast Completed:\nCompleted in {time_taken} seconds.\n\nTotal Groups {total_groups}\nCompleted: {done} / {total_groups}\nSuccess: {success}")
 
-      
+ #_________________________________________________________________________________________
 @Client.on_message(filters.command(["junk_group", "clear_junk_group"]) & filters.user(ADMINS))
 async def junk_clear_group(bot, message):
     groups = await db.get_all_chats()
