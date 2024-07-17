@@ -23,7 +23,7 @@ from pyrogram import Client
 from pyromod import listen
 from database.ia_filterdb import Media
 from info import *
-from utils import temp, __repo__, __license__, __copyright__, __version__
+from utils import temp
 from typing import Union, Optional, AsyncGenerator
 from pyrogram import types
 from aiohttp import web
