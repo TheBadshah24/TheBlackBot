@@ -1,85 +1,92 @@
-import os, math, logging, datetime, pytz
-import logging.config
-
-from pyrogram.errors import BadRequest, Unauthorized
-from pyrogram import Client
-from pyrogram import types
-
-from database.ia_filterdb import Media
-from database.users_chats_db import db
-from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL, UPTIME, WEB_SUPPORT, LOG_MSG
-from utils import temp, __repo__, __license__, __copyright__, __version__
-from typing import Union, Optional, AsyncGenerator
-
-from plugins import web_server 
-from aiohttp import web
+import sys, glob, importlib, logging, logging.config, pytz, asyncio
+from pathlib import Path
 
 # Get logging configurations
-logging.config.fileConfig("logging.conf")
+logging.config.fileConfig('logging.conf')
 logging.getLogger().setLevel(logging.INFO)
-logging.getLogger("cinemagoer").setLevel(logging.ERROR)
-logger = logging.getLogger(__name__)
+logging.getLogger("pyrogram").setLevel(logging.ERROR)
+logging.getLogger("imdbpy").setLevel(logging.ERROR)
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logging.getLogger("aiohttp").setLevel(logging.ERROR)
+logging.getLogger("aiohttp.web").setLevel(logging.ERROR)
+
+from pyrogram import Client, idle 
+from pyromod import listen
+from database.ia_filterdb import Media
+from database.users_chats_db import db
+from info import *
+from utils import temp, __repo__, __license__, __copyright__, __version__
+from typing import Union, Optional, AsyncGenerator
+from Script import script 
+from datetime import date, datetime 
+from aiohttp import web
+from plugins import web_server
+# bot login 
+from bot import TheBlackBot
+from util.keepalive import ping_server
+from bot.clients import initialize_clients
+
+ppath = "plugins/*.py"
+files = glob.glob(ppath)
+TheBlackBot.start() 
+loop = asyncio.get_event_loop()
+PORT = "8080"
+
+async def start():
+    print('\n')
+    print('Initalizing Your Bot')
+    bot_info = await TheBlackBot.get_me()
+    TheBlackBot.username = bot_info.username
+    await initialize_clients()
+    for name in files:
+        with open(name) as a:
+            patt = Path(a.name)
+            plugin_name = patt.stem.replace(".py", "")
+            plugins_dir = Path(f"plugins/{plugin_name}.py")
+            import_path = "plugins.{}".format(plugin_name)
+            spec = importlib.util.spec_from_file_location(import_path, plugins_dir)
+            load = importlib.util.module_from_spec(spec)
+            spec.loader.exec_module(load)
+            sys.modules["plugins." + plugin_name] = load
+            print("The Black Imported => " + plugin_name)
+    if ON_HEROKU:
+        asyncio.create_task(ping_server())
+    b_users, b_chats = await db.get_banned()
+    temp.BANNED_USERS = b_users
+    temp.BANNED_CHATS = b_chats
+    await Media.ensure_indexes()
+    me = await TheBlackBot.get_me()
+    temp.ME = me.id
+    temp.U_NAME = me.username
+    temp.B_NAME = me.first_name
+    TheBlackBot.username = '@' + me.username
+    logging.info(LOG_STR)
+    logging.info(script.LOGO)
+    tz = pytz.timezone('Asia/Kolkata')
+    today = date.today()
+    now = datetime.now(tz)
+    time = now.strftime("%H:%M:%S %p")
+    await TheBlackBot.send_message(chat_id=LOG_CHANNEL, text=LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__, today), disable_web_page_preview=True)
+    app = web.AppRunner(await web_server())
+    await app.setup()
+    bind_address = "0.0.0.0"
+    await web.TCPSite(app, bind_address, PORT).start()
+    await idle()
 
 
-class Bot(Client):
+if __name__ == '__main__':
+    try:
+        loop.run_until_complete(start())
+    except KeyboardInterrupt:
+        logging.info('Service Is Stop Sweety 🚏')
 
-    def __init__(self):
-        super().__init__(
-            name="Professor-Bot",
-            api_id=API_ID,
-            api_hash=API_HASH,
-            bot_token=BOT_TOKEN,
-            workers=200,
-            plugins={"root": "plugins"},
-            sleep_threshold=10,
-        )
-
-    async def start(self):
-        b_users, b_chats = await db.get_banned()
-        temp.BANNED_USERS = b_users
-        temp.BANNED_CHATS = b_chats        
-        await super().start()
-        await Media.ensure_indexes()
-        me = await self.get_me()
-        temp.U_NAME = me.username
-        temp.B_NAME = me.first_name
-        self.id = me.id
-        self.name = me.first_name
-        self.mention = me.mention
-        self.username = me.username
-        self.log_channel = LOG_CHANNEL
-        self.uptime = UPTIME
-        curr = datetime.datetime.now(pytz.timezone("Asia/Kolkata"))
-        date = curr.strftime('%d %B, %Y')
-        tame = curr.strftime('%I:%M:%S %p')
-        logger.info(LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
-        try: await self.send_message(LOG_CHANNEL, text=LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__), disable_web_page_preview=True)   
-        except Exception as e: logger.warning(f"Bot Isn't Able To Send Message To LOG_CHANNEL \n{e}")
-        if WEB_SUPPORT:
-            app = web.AppRunner(await web_server())
-            await app.setup()
-            await web.TCPSite(app, "0.0.0.0", 8080).start()
-            logger.info("Web Response Is Running......🕸️")
-            
-    async def stop(self, *args):
-        await super().stop()
-        logger.info(f"Bot Is Restarting ⟳...")
-
-    async def iter_messages(self, chat_id: Union[int, str], limit: int, offset: int = 0) -> Optional[AsyncGenerator["types.Message", None]]:                       
-        current = offset
-        while True:
-            new_diff = min(200, limit - current)
-            if new_diff <= 0:
-                return
-            messages = await self.get_messages(chat_id, list(range(current, current+new_diff+1)))
-            for message in messages:
-                yield message
-                current += 1
-
-
-        
-Bot().run()
-
-
-
-
+# Credit @TheBlackXYZ.
+# Please Don't remove credit.
+# TheBlackXYZBotz Forever !
+# Thanks You For Help Us In This Amazing Creativity 
+# Thanks You For Giving Me Credit @TheBlackXYZBotz
+# For Any ERROR Please Contact Me -> Telegram ->@TheBlackXYZBotz & Insta @TheBlackXYZ
+# Please Love & Support 💗💗🙏
