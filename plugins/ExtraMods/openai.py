@@ -7,7 +7,7 @@
 # Please Love & Support 💗💗🙏
 
 from pyrogram import Client, filters
-from plugins.Extra.engine import ask_ai
+from plugins.ExtraMods.engine import ask_ai
 
 
 @Client.on_message(filters.command('openai'))
