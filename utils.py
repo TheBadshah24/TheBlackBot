@@ -19,12 +19,14 @@ from info import *
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
+lock = asyncio.Lock()
 
 BTN_URL_REGEX = re.compile(r"(\[([^\[]+?)\]\((buttonurl|buttonalert):(?:/{0,2})(.+?)(:same)?\))")
 BANNED = {}
 SMART_OPEN = '“'
 SMART_CLOSE = '”'
 START_CHAR = ('\'', '"', SMART_OPEN)
+
 
 # temp db for banned 
 class temp(object):
