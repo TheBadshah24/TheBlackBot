@@ -1,5 +1,5 @@
 import os
-from plugins.ExtraMods.fotnt_string import Fonts
+from Font.fotnt_string import Fonts
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
