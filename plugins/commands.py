@@ -1,4 +1,6 @@
-import asyncio, re, ast, math, logging, pyrogram
+#import asyncio, re, ast, math, logging, pyrogram
+import os, string, logging, random, asyncio, time, datetime, re, sys, json, base64
+
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from Script import script
 from utils import get_shortlink 
