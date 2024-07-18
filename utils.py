@@ -1,22 +1,18 @@
-#import logging, os, re, asyncio, requests, aiohttp 
-import logging 
-import asyncio
-import os
-import re
+import logging, os, re, asyncio, requests, aiohttp 
 import random
 import pytz
-import aiohttp
-import requests
 import string
 import json
 import http.client
-from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid                             
-from pyrogram.types import Message, InlineKeyboardButton, InlineKeyboardMarkup
-from pyrogram import filters, enums
+
+# pyrogram variable 
+from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid, MessageNotModified                             
+from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto, ChatPermissions, WebAppInfo
+from pyrogram import filters, enums, Client
 #from info import AUTH_CHANNEL, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, SHORT_URL, SHORT_API
 from imdb import Cinemagoer
 from typing import Union, List
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date, time
 from database.users_chats_db import db
 from bs4 import BeautifulSoup
 from info import *
