@@ -1,6 +1,6 @@
 git+https://github.com/TheBlackxyz/cinemagoer
 pyrogram==2.0.106
-pyromod
+#pyromod
 tgcrypto 
 requests 
 bs4 
@@ -33,6 +33,6 @@ psutil==5.9.4
 dnspython==2.3.0
 ffmpeg-python>=0.2.0
 ffmpeg
-#pyromod==1.5
-PyLeaves==1.0.2
-humanize==4.6.0 
+pyromod==1.5
+#PyLeaves==1.0.2
+#humanize
