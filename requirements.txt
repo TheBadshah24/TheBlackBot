@@ -1,7 +1,7 @@
 git+https://github.com/TheBlackxyz/cinemagoer
 pyrogram==2.0.106
 #pyromod
-pyromod 3.1.6
+pyromod==3.1.6
 tgcrypto 
 requests 
 bs4 
