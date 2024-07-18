@@ -31,8 +31,8 @@ speedtest==0.0.1
 Pillow==9.4.0 
 psutil==5.9.4 
 dnspython==2.3.0
-#ffmpeg-python>=0.2.0
-#ffmpeg
+ffmpeg-python>=0.2.0
+ffmpeg
 #pyromod==1.5
 #PyLeaves==1.0.2
 #humanize
