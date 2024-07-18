@@ -1,5 +1,4 @@
-import asyncio, re, ast, math, logging, pyrogram, pytz
-import os, string, random, time, datetime, sys, json, base64
+import asyncio, re, ast, math, logging, pyrogram
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from Script import script
 from utils import get_shortlink 
@@ -17,7 +16,6 @@ from plugins.group_filter import global_filters
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
-lock = asyncio.Lock()
 
 
 @Client.on_message(filters.private & filters.text & filters.chat(AUTH_USERS) if AUTH_USERS else filters.text & filters.private)
