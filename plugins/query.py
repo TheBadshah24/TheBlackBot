@@ -1,6 +1,5 @@
-#import asyncio, re, ast, time, math, logging, random, pyrogram, shutil, psutil 
-
-import os, logging, string, asyncio, time, re, ast, random, math, pytz, pyrogram
+import asyncio, re, ast, time, math, logging, random, pyrogram, shutil, psutil 
+import os, string, random, math, pytz
 
 # Pyrogram Functions
 from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, WebpageMediaEmpty
