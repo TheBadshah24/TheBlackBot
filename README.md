@@ -125,7 +125,3 @@ broadcast - to broadcast a message to all Eva Maria users
 </p>
 
 
-# Adavnce Features 
-<p align="center">
-<img src="https://graph.org/file/f904f64b6694037387099.jpg" </p>
-
