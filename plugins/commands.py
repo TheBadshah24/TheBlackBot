@@ -13,6 +13,7 @@ from plugins.group_filter import global_filters
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
+lock = asyncio.Lock()
 
 
 @Client.on_message(filters.command("start") & filters.incoming)
