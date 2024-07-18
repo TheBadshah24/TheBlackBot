@@ -14,9 +14,9 @@ def is_enabled(value, default):
 
 # PyroClient Setup 
 SESSION = environ.get('SESSION', 'TheBlackBot')
-API_ID = int(environ['API_ID'])
-API_HASH = environ['API_HASH']
-BOT_TOKEN = environ['BOT_TOKEN']
+API_ID = int(environ.get('API_ID', '29450452'))
+API_HASH = environ.get('API_HASH', '54759945ff88b52777eec9a455944d31')
+BOT_TOKEN = environ.get('BOT_TOKEN', "")
 
 # Bot settings
 WEB_SUPPORT = bool(environ.get("WEBHOOK", True)) # for web support on/off
