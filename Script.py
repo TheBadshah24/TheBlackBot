@@ -228,7 +228,7 @@ Wᴇʟᴄᴏᴍᴇ ᴛᴏ {chat}.
 👀 DATA Pass From - @TheBlackXYZ """
    
 
-RESTART_TXT = """
+    RESTART_TXT = """
 <b>Bᴏᴛ Rᴇsᴛᴀʀᴛᴇᴅ !
 
 📅 Dᴀᴛᴇ : <code>{}</code>
@@ -237,7 +237,7 @@ RESTART_TXT = """
 🛠️ Bᴜɪʟᴅ Sᴛᴀᴛᴜs: <code>v2.7.1 [ Sᴛᴀʙʟᴇ ]</code></b>"""
 
    
-LOGO = """
+    LOGO = """
 
 THE BLACK BOTZ STARTED"""
  
