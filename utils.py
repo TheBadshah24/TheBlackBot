@@ -14,8 +14,9 @@ import http.client
 from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid                    
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton
 from pyrogram import filters, enums, Client
-from info import AUTH_CHANNEL, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, SHORT_URL, SHORT_API
+#from info import AUTH_CHANNEL, LONG_IMDB_DESCRIPTION, MAX_LIST_ELM, SHORT_URL, SHORT_API
 from imdb import Cinemagoer
+from info import*
 from typing import Union, List
 from datetime import datetime, timedelta, date, time
 from database.users_chats_db import db
@@ -24,6 +25,7 @@ from bs4 import BeautifulSoup
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
+imdb = Cinemagoer() 
 BTN_URL_REGEX = re.compile(r"(\[([^\[]+?)\]\((buttonurl|buttonalert):(?:/{0,2})(.+?)(:same)?\))")
 BANNED = {}
 SMART_OPEN = '“'
@@ -45,6 +47,12 @@ class temp(object):
     PM_BUTTONS = {}
     PM_SPELL = {}
     GP_SPELL = {}
+    # added fom TheBlackXYZBotz
+    ME = None
+    BOT = None
+    CURRENT=int(os.environ.get("SKIP", 2))
+    SHORT = {}
+    IMDB_CAP = {}
 
 async def is_subscribed(bot, query):
     try:
