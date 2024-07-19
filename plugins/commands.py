@@ -215,25 +215,24 @@ async def start(client, message):
     await client.send_cached_media(chat_id=message.from_user.id, file_id=file_id, caption=f_caption, protect_content=True if pre == 'filep' else False,)
                     
 
-
-@Client.on_message(filters.command('channel') & filters.user(ADMINS))
-async def channel_info(bot, message):
-    if isinstance(CHANNELS, (int, str)): channels = [CHANNELS]
-    elif isinstance(CHANNELS, list): channels = CHANNELS
-    else: raise ValueError("Unexpected Type Of CHANNELS")
-    text = '📑 **Indexed channels/groups**\n'
-    for channel in channels:
-        chat = await bot.get_chat(channel)
-        if chat.username: text += '\n@' + chat.username
-        else: text += '\n' + chat.title or chat.first_name
-    text += f'\n\n**Total:** {len(CHANNELS)}'
-    if len(text) < 4096: await message.reply(text)
-    else:
-        file = 'Indexed channels.txt'
-        with open(file, 'w') as f:
-            f.write(text)
-        await message.reply_document(file)
-        os.remove(file)
+#@Client.on_message(filters.command('channel') & filters.user(ADMINS))
+#async def channel_info(bot, message):
+ #   if isinstance(CHANNELS, (int, str)): channels = [CHANNELS]
+#    elif isinstance(CHANNELS, list): channels = CHANNELS
+#    else: raise ValueError("Unexpected Type Of CHANNELS")
+#    text = '📑 **Indexed channels/groups**\n'
+ #   for channel in channels:
+ #       chat = await bot.get_chat(channel)
+  #      if chat.username: text += '\n@' + chat.username
+   #     else: text += '\n' + chat.title or chat.first_name
+ #   text += f'\n\n**Total:** {len(CHANNELS)}'
+#    if len(text) < 4096: await message.reply(text)
+#    else:
+ #       file = 'Indexed channels.txt'
+#        with open(file, 'w') as f:
+  #          f.write(text)
+#        await message.reply_document(file)
+ #       os.remove(file)
 
 
 @Client.on_message(filters.command('delete') & filters.user(ADMINS))
