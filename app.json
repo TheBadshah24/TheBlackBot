@@ -16,17 +16,7 @@
       "inline"
     ],
     "repository": "https://github.com/TheBlackxyz/TheBlackBot",
-    "env":{
-    "SESSION": {
-        "description": "pyrogram v2 session string ⚠️ v2 required ⚠️"
-        "value": "True",
-        "required": true 
-        },
-         "WEBHOOK": {
-            "description": "True/False if your server is web support required? the value is True else False",
-            "value": "True",
-            "required": true
-        },
+    "env":{  
         "BOT_TOKEN": {
             "description": "Your bot token.",
             "required": true
@@ -51,11 +41,6 @@
             "description": "ID of channel.Make sure bot is admin in this channel. Without subscribing this channel users cannot use bot.",
             "required": true 
         },
-        "CUSTOM_FILE_CAPTION": {
-            "description": "A custom file caption for your files. formatable with , file_name, file_caption, file_size, Read Readme.md for better understanding.",
-            "value": "Hey {mention}👋\n\n{file_name}\n\n🔘 size - {file_size}\n\n╭─── • ❰ @MR_LINK_Z ❱ • ────➤\n┣ ▫️ @MRxSERIES\n┣ ▫️ @MalluMovie_Official\n╰─────── • ◆ • ───────➤",
-            "required": true 
-        },
         "DATABASE_URL": {
             "description": "mongoDB URI.",
             "required": true
@@ -68,27 +53,7 @@
         "COLLECTION_NAME": {
             "description": "Name of the collections. Defaults to Telegram_files. If you are using the same database, then use different collection name for each bot",
             "value": "Telegram_files",
-            "required": false     
-        },
-        "IMDB_TEMPLATE": {
-            "description": "Custom IMDB Template",
-            "value": "<b>Qᴜᴇʀʏ: {query}</b>\n\n🏷 Tɪᴛʟᴇ: <a href={url}>{title}</a>\n🎭 Gᴇɴʀᴇꜱ: {genres}\n📆 Yᴇᴀʀ: <a href={url}/releaseinfo>{year}</a>\n🌟 Rᴀᴛɪɴɢ: <a href={url}/ratings>{rating}</a>/10",        
-            "required": true 
-        }, 
-        "IMDB_DELET_TIME": {
-            "description": "bot risult aouto delet time in second do to avoid group copyright issue. default is 300 ",
-            "value": "300",
-            "required": true         
-        },
-        "START_MESSAGE": {
-            "description": "bot start message text [ {user} = bot startd user name {bot} = your bot name",
-            "value": "<b>✨ Hᴇʟʟᴏ {user}.\n\nMʏ Nᴀᴍᴇ Is {bot}.\n\nI Cᴀɴ Pʀᴏᴠɪᴅᴇ Mᴏᴠɪᴇ Fᴏʀ Yᴏᴜ Jᴜsᴛ Aᴅᴅ Mᴇ Iɴ Yᴏᴜʀ Gʀᴏᴜᴘ Oʀ Jᴏɪɴ Oᴜʀ Gʀᴏᴜᴘ</b>",
-            "required": true 
-        },       
-        "FORCE_SUB_TEXT": {
-            "description": "custom force sub text (use ** = bold / use ``=  mono)",
-            "value": "Sᴏʀʀʏ Bʀᴏ Yᴏᴜʀ Nᴏᴛ Jᴏɪɴᴇᴅ Mʏ Cʜᴀɴɴᴇʟ Sᴏ Pʟᴇᴀsᴇ Cʟɪᴄᴋ Jᴏɪɴ Bᴜᴛᴛᴏɴ Tᴏ Jᴏɪɴ Mʏ Cʜᴀɴɴᴇʟ Aɴᴅ Tʀʏ Aɢᴀɪɴ",
-            "required": true 
+            "required": false      
         },
         "WELCOM_PIC": {
             "description": "Welcome message pic (telegraph link)",
@@ -98,18 +63,19 @@
         "WELCOM_TEXT": {
             "description": "your group welcome text keyword({user} = joined use & {chat} = your chat name",
             "value": "Hᴇʏ {user} 💞\nWᴇʟᴄᴏᴍᴇ ᴛᴏ {chat}.\n\nꜱʜᴀʀᴇ & ꜱᴜᴩᴩᴏʀᴛ, ʀᴇqᴜᴇꜱᴛ ʏᴏᴜ ᴡᴀɴᴛᴇᴅ ᴍᴏᴠɪᴇꜱ",
-            "required": false 
-        },
-        "P_TTI_SHOW_OFF": { 
-            "description": "Customize Result Buttons to Callback or Url by (True = url / False = callback)",
-            "value": "True",
-            "required": true 
+            "required": false
         }
     },
-    "buildpacks":
-        [
-            {"url": "heroku/python"}
-        ]      
+    "addons": [],
+    "buildpacks": [{
+        "url": "heroku/python"
+    }],
+    "formation": {
+        "worker": {
+            "quantity": 1,
+            "size": "eco"
+        }
+    }
 }
 
 
