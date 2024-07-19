@@ -24,6 +24,8 @@ from info import ADMINS, AUTH_CHANNEL, AUTH_USERS, CUSTOM_FILE_CAPTION, AUTH_GRO
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
+lock = asyncio.Lock()
+
 
 @Client.on_callback_query()
 async def cb_handler(client: Client, query: CallbackQuery):
