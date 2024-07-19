@@ -1,21 +1,18 @@
-#import asyncio, re, ast, math, logging, pyrogram
-import os, string, logging, random, asyncio, time, datetime, re, sys, json, base64
+import os, re, json, base64, logging, random, asyncio
 
-from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
 from Script import script
-from utils import get_shortlink 
-from info import AUTH_USERS, PM_IMDB, SINGLE_BUTTON, PROTECT_CONTENT, SPELL_CHECK_REPLY, IMDB_TEMPLATE, IMDB_DELET_TIME, PMFILTER, G_FILTER, SHORT_URL, SHORT_API
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
-from pyrogram import Client, filters, enums 
-from pyrogram.errors import FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid
-from utils import get_size, is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings
 from database.users_chats_db import db
-from database.ia_filterdb import Media, get_file_details, get_search_results
-from plugins.group_filter import global_filters
+from pyrogram import Client, filters, enums
+from pyrogram.errors import ChatAdminRequired, FloodWait
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+from database.ia_filterdb import Media, get_file_details, unpack_new_file_id
+#from info import CHANNELS, ADMINS, AUTH_CHANNEL, LOG_CHANNEL, PICS, BATCH_FILE_CAPTION, CUSTOM_FILE_CAPTION, PROTECT_CONTENT, START_MESSAGE, FORCE_SUB_TEXT, SUPPORT_CHAT
+from utils import get_settings, get_size, is_subscribed, save_group_settings, temp
+from database.connections_mdb import active_connection
+from info import *
 
 logger = logging.getLogger(__name__)
-logger.setLevel(logging.ERROR)
-
+BATCH_FILES = {}
 
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
@@ -215,24 +212,25 @@ async def start(client, message):
     await client.send_cached_media(chat_id=message.from_user.id, file_id=file_id, caption=f_caption, protect_content=True if pre == 'filep' else False,)
                     
 
-#@Client.on_message(filters.command('channel') & filters.user(ADMINS))
-#async def channel_info(bot, message):
- #   if isinstance(CHANNELS, (int, str)): channels = [CHANNELS]
-#    elif isinstance(CHANNELS, list): channels = CHANNELS
-#    else: raise ValueError("Unexpected Type Of CHANNELS")
-#    text = '📑 **Indexed channels/groups**\n'
- #   for channel in channels:
- #       chat = await bot.get_chat(channel)
-  #      if chat.username: text += '\n@' + chat.username
-   #     else: text += '\n' + chat.title or chat.first_name
- #   text += f'\n\n**Total:** {len(CHANNELS)}'
-#    if len(text) < 4096: await message.reply(text)
-#    else:
- #       file = 'Indexed channels.txt'
-#        with open(file, 'w') as f:
-  #          f.write(text)
-#        await message.reply_document(file)
- #       os.remove(file)
+
+@Client.on_message(filters.command('channel') & filters.user(ADMINS))
+async def channel_info(bot, message):
+    if isinstance(CHANNELS, (int, str)): channels = [CHANNELS]
+    elif isinstance(CHANNELS, list): channels = CHANNELS
+    else: raise ValueError("Unexpected Type Of CHANNELS")
+    text = '📑 **Indexed channels/groups**\n'
+    for channel in channels:
+        chat = await bot.get_chat(channel)
+        if chat.username: text += '\n@' + chat.username
+        else: text += '\n' + chat.title or chat.first_name
+    text += f'\n\n**Total:** {len(CHANNELS)}'
+    if len(text) < 4096: await message.reply(text)
+    else:
+        file = 'Indexed channels.txt'
+        with open(file, 'w') as f:
+            f.write(text)
+        await message.reply_document(file)
+        os.remove(file)
 
 
 @Client.on_message(filters.command('delete') & filters.user(ADMINS))
