@@ -237,7 +237,9 @@ RESTART_TXT = """
 🛠️ Bᴜɪʟᴅ Sᴛᴀᴛᴜs: <code>v2.7.1 [ Sᴛᴀʙʟᴇ ]</code></b>"""
 
    
-  
+LOGO = """
+
+THE BLACK BOTZ STARTED"""
  
 
 
