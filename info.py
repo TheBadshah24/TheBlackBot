@@ -47,11 +47,11 @@ START_MESSAGE = environ.get('START_MESSAGE', script.START_TXT)
 BUTTON_LOCK_TEXT = environ.get("BUTTON_LOCK_TEXT", script.BUTTON_LOCK_TEXT)
 FORCE_SUB_TEXT = environ.get('FORCE_SUB_TEXT', script.FORCE_SUB_TEXT)
 
-WELCOM_PIC = environ.get("WELCOM_PIC", "welcome To My Heart 🤗")
+WELCOM_PIC = environ.get("WELCOM_PIC", "Welcome To TheBlackXYZ Family Sweetie 🥰")
 WELCOM_TEXT = environ.get("WELCOM_TEXT", script.WELCOM_TEXT)
 PMFILTER = is_enabled(environ.get('PMFILTER', "True"), True)
 G_FILTER = is_enabled(environ.get("G_FILTER", "True"), True)
-BUTTON_LOCK = is_enabled(environ.get("BUTTON_LOCK", "True"), True)
+BUTTON_LOCK = is_enabled(environ.get("BUTTON_LOCK", "False"), False)
 
 # url shortner
 SHORT_URL = environ.get("SHORT_URL", '')
