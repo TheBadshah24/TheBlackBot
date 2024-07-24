@@ -2,14 +2,14 @@ git+https://github.com/TheBlackxyz/cinemagoer
 pyrogram==2.0.106
 pyromod==1.5
 tgcrypto 
-requests 
+requests==2.30.0
 bs4 
 datetime 
 pytz 
 aiohttp
 yt-dlp
 youtube-dl
-NumPy 
+NumPy==1.26.2
 wheel 
 ujson 
 wget 
@@ -18,7 +18,7 @@ aiofiles
 python-decouple 
 youtube_search
 pymongo[srv]==3.12.3 
-motor==2.5.1 
+motor==3.3.1 
 marshmallow==3.14.1 
 umongo==3.0.1 
 youtube-search-python==1.4.6
