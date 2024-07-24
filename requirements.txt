@@ -2,14 +2,14 @@ git+https://github.com/TheBlackxyz/cinemagoer
 pyrogram==2.0.106
 pyromod==1.5
 tgcrypto 
-requests==2.30.0
+requests
 bs4 
 datetime 
 pytz 
 aiohttp
 yt-dlp
 youtube-dl
-NumPy==1.26.2
+NumPy
 wheel 
 ujson 
 wget 
