@@ -36,8 +36,8 @@ AUTH_GROUPS = [int(ch) for ch in auth_grp.split()] if auth_grp else None
 # MongoDB information
 DATABASE_URL = environ.get('DATABASE_URL', "mongodb+srv://TheBlackXYZ:TheBlackXYZ@cluster0.mq5cmvh.mongodb.net/?retryWrites=true&w=majority")
 DATABASE_NAME = environ.get('DATABASE_NAME', "Cluster0")
-FILE_DB_URL = environ.get("FILE_DB_URL", DATABASE_URL)
-FILE_DB_NAME = environ.get("FILE_DB_NAME", DATABASE_NAME)
+#FILE_DB_URL = environ.get("FILE_DB_URL", DATABASE_URL)
+#FILE_DB_NAME = environ.get("FILE_DB_NAME", DATABASE_NAME)
 COLLECTION_NAME = environ.get('COLLECTION_NAME', 'Telegram_files')
 
 # Filters Configuration 
@@ -84,7 +84,7 @@ if 'DYNO' in environ:
     ON_HEROKU = True
 else:
     ON_HEROKU = False
-URL = environ.get("URL", "https://daily-whale-theblackxyz9021-52efa06f.koyeb.app/") # Fill env at deoplyment time Stream Mode Is True else avoide 
+URL = environ.get("URL", "https://aesthetic-ally-theblackxyz-84907c5f.koyeb.app/") # Fill env at deoplyment time Stream Mode Is True else avoide 
 
 LOG_STR = "Current Cusomized Configurations are:-\n"
 LOG_STR += ("IMDB Results are enabled, Bot will be showing imdb details for you queries.\n" if IMDB else "IMBD Results are disabled.\n")
