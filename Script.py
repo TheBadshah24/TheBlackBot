@@ -225,7 +225,7 @@ Wᴇʟᴄᴏᴍᴇ ᴛᴏ {chat}.
 🌟 Rᴀᴛɪɴɢ: <a href={url}/ratings>{rating}</a>/10
 👀 DATA Pass From - @TheBlackXYZ """
 
-    CAPTION = """Hey {mention}👋\n\n{file_name}\n\n♻️ size - {file_size}\n\n┣▫️ @TheBlackXYZ_Movies\n┣ ▫️ @TheBlackXYZ\n┣ ▫️ @TheBlackXYZBotz\n─ • ◆ •""" 
+    CAPTION = """Hey {mention}👋\n\n{file_name}\n\n♻️ size - {file_size}\n\n┣ ▫️ @TheBlackXYZ_Movies\n┣ ▫️ @TheBlackXYZ\n┣ ▫️ @TheBlackXYZBotz\n─ • ◆ •""" 
    
 
     RESTART_TXT = """
