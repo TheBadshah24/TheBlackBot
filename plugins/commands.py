@@ -21,11 +21,13 @@ BATCH_FILES = {}
 async def start(client, message):
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
         buttons = [[
-            InlineKeyboardButton('Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Gʀᴏᴜᴘ', url=f'http://t.me/{temp.U_NAME}?startgroup=true')
-        ],[
+            ],[
+            InlineKeyboardButton("Sᴇᴀʀᴄʜ 🔎", switch_inline_query_current_chat=''), 
+            InlineKeyboardButton("Cʜᴀɴɴᴇʟ 🔈", url="https://t.me/TheBlackXYZ")
+            ],[
             InlineKeyboardButton('Sᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ', url="https://t.me/The_Black_XYZ_SupportChat"),
             InlineKeyboardButton('Mᴏᴠɪᴇ Gʀᴏᴜᴘ', url="https://t.me/TheBlackXYZ_Movie_Group")
-        ],[
+            ],[
             InlineKeyboardButton('TheBlackXYZBotz', url="https://t.me/TheBlackXYZBotz")
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
@@ -54,7 +56,7 @@ async def start(client, message):
             InlineKeyboardButton("Hᴇʟᴩ 🕸️", callback_data="help"),
             InlineKeyboardButton("Aʙᴏᴜᴛ ✨", callback_data="about")
        ]]
-       # m = await message.reply_sticker("CAACAgUAAxkBAAIMQGag0U1i4t-a-hjIXuH_YUF4kgHVAAIZAAPBJDExdIRqdS3HSoseBA") 
+        m = await message.reply_sticker("CAACAgQAAxkBAAIMUGahAQEnZdpSk_hVXaGBM8qAeYGBAAIZEAAC50twUYBuwdTco0lTHgQ") 
         await asyncio.sleep(2)
         await message.reply_photo(photo=random.choice(PICS), caption=START_MESSAGE.format(user=message.from_user.mention, bot=client.mention), reply_markup=InlineKeyboardMarkup(buttons), parse_mode=enums.ParseMode.HTML)
         return await m.delete()
@@ -95,7 +97,7 @@ async def start(client, message):
             InlineKeyboardButton("Hᴇʟᴩ 🕸️", callback_data="help"),
             InlineKeyboardButton("Aʙᴏᴜᴛ ✨", callback_data="about")
        ]]
-       # m = await message.reply_sticker("CAACAgUAAxkBAAIMQGag0U1i4t-a-hjIXuH_YUF4kgHVAAIZAAPBJDExdIRqdS3HSoseBA")
+        m = await message.reply_sticker("CAACAgQAAxkBAAIMUGahAQEnZdpSk_hVXaGBM8qAeYGBAAIZEAAC50twUYBuwdTco0lTHgQ")
         await asyncio.sleep(2)
         await message.reply_photo(photo=random.choice(PICS), caption=START_MESSAGE.format(user=message.from_user.mention, bot=client.mention), reply_markup=InlineKeyboardMarkup(buttons), parse_mode=enums.ParseMode.HTML)
         return await m.delete()
@@ -339,8 +341,6 @@ async def settings(client, message):
             disable_web_page_preview=True,
             parse_mode=enums.ParseMode.HTML,
         )
-
-
 
 @Client.on_message(filters.command('set_template'))
 async def save_template(client, message):
