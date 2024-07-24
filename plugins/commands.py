@@ -24,9 +24,9 @@ async def start(client, message):
             InlineKeyboardButton('Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Gʀᴏᴜᴘ', url=f'http://t.me/{temp.U_NAME}?startgroup=true')
         ],[
             InlineKeyboardButton('Sᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ', url="https://t.me/The_Black_XYZ_SupportChat"),
-            InlineKeyboardButton('Mᴏᴠɪᴇ Gʀᴏᴜᴘ', url='https://t.me/TheBlackXYZ_Movie_Group')
+            InlineKeyboardButton('Mᴏᴠɪᴇ Gʀᴏᴜᴘ', url="https://t.me/TheBlackXYZ_Movie_Group")
         ],[
-            InlineKeyboardButton('Uᴘᴅᴀᴛᴇs', url=CHNL_LNK)
+            InlineKeyboardButton('TheBlackXYZBotz', url="https://t.me/TheBlackXYZBotz")
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply(START_MESSAGE.format(user=message.from_user.mention if message.from_user else message.chat.title, bot=client.mention), reply_markup=InlineKeyboardMarkup(buttons), disable_web_page_preview=True)                    
@@ -47,9 +47,9 @@ async def start(client, message):
             InlineKeyboardButton("Cʜᴀɴɴᴇʟ 🔈", url="https://t.me/TheBlackXYZ")
             ],[
             InlineKeyboardButton('Sᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ', url="https://t.me/The_Black_XYZ_SupportChat"),
-            InlineKeyboardButton('Mᴏᴠɪᴇ Gʀᴏᴜᴘ', url='https://t.me/TheBlackXYZ_Movie_Group')
+            InlineKeyboardButton('Mᴏᴠɪᴇ Gʀᴏᴜᴘ', url="https://t.me/TheBlackXYZ_Movie_Group")
             ],[
-            InlineKeyboardButton('TheBlackXYZBotz', url=f"https://t.me/TheBlackXYZBotz")
+            InlineKeyboardButton('TheBlackXYZBotz', url="https://t.me/TheBlackXYZBotz")
             ],[      
             InlineKeyboardButton("Hᴇʟᴩ 🕸️", callback_data="help"),
             InlineKeyboardButton("Aʙᴏᴜᴛ ✨", callback_data="about")
@@ -88,9 +88,9 @@ async def start(client, message):
             InlineKeyboardButton("Cʜᴀɴɴᴇʟ 🔈", url="https://t.me/TheBlackXYZ")
             ],[
             InlineKeyboardButton('Sᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ', url="https://t.me/The_Black_XYZ_SupportChat"),
-            InlineKeyboardButton('Mᴏᴠɪᴇ Gʀᴏᴜᴘ', url='https://t.me/TheBlackXYZ_Movie_Group')
+            InlineKeyboardButton('Mᴏᴠɪᴇ Gʀᴏᴜᴘ', url="https://t.me/TheBlackXYZ_Movie_Group")
             ],[
-            InlineKeyboardButton('TheBlackXYZBotz', url=f"https://t.me/TheBlackXYZBotz")
+            InlineKeyboardButton('TheBlackXYZBotz', url="https://t.me/TheBlackXYZBotz")
             ],[      
             InlineKeyboardButton("Hᴇʟᴩ 🕸️", callback_data="help"),
             InlineKeyboardButton("Aʙᴏᴜᴛ ✨", callback_data="about")
