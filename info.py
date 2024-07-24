@@ -19,7 +19,6 @@ API_HASH = environ.get('API_HASH', '54759945ff88b52777eec9a455944d31')
 BOT_TOKEN = environ.get('BOT_TOKEN', "")
 
 # Bot settings
-WEB_SUPPORT = bool(environ.get("WEBHOOK", True)) # for web support on/off
 PICS = (environ.get('PICS' ,'https://telegra.ph/file/517bc12dd5c1347df10f6.jpg')).split()
 UPTIME = time.time()
 
@@ -54,8 +53,8 @@ G_FILTER = is_enabled(environ.get("G_FILTER", "True"), True)
 BUTTON_LOCK = is_enabled(environ.get("BUTTON_LOCK", "False"), False)
 
 # url shortner
-SHORT_URL = environ.get("SHORT_URL", '')
-SHORT_API = environ.get("SHORT_API", '')
+SHORT_URL = environ.get("SHORT_URL", 'yamlinks.com')
+SHORT_API = environ.get("SHORT_API", '8ba797ded52d10834ad44fc07bf9c659a67167d4')
 
 # Others
 IMDB_DELET_TIME = int(environ.get('IMDB_DELET_TIME', "300"))
