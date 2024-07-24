@@ -57,7 +57,6 @@ BUTTON_LOCK = is_enabled(environ.get("BUTTON_LOCK", "False"), False)
 SHORT_URL = environ.get("SHORT_URL", '')
 SHORT_API = environ.get("SHORT_API", '')
 
-
 # Others
 IMDB_DELET_TIME = int(environ.get('IMDB_DELET_TIME', "300"))
 LOG_CHANNEL = int(environ.get('LOG_CHANNEL', '-1002101130967'))
@@ -76,6 +75,17 @@ FILE_STORE_CHANNEL = [int(ch) for ch in (environ.get('FILE_STORE_CHANNEL', '-100
 MELCOW_NEW_USERS = is_enabled(environ.get('MELCOW_NEW_USERS', "False"), False)
 PROTECT_CONTENT = is_enabled(environ.get('PROTECT_CONTENT', "False"), False)
 PUBLIC_FILE_STORE = is_enabled(environ.get('PUBLIC_FILE_STORE', "True"), True)
+
+# Stream Mode Is True Then Fill All Required Variable, If False Then Don't Fill.
+STREAM_MODE = bool(environ.get('STREAM_MODE', True)) # Set True or False
+SLEEP_THRESHOLD = int(environ.get('SLEEP_THRESHOLD', '60'))
+PING_INTERVAL = int(environ.get("PING_INTERVAL", "1200"))  # 20 minutes
+MULTI_CLIENT = False
+if 'DYNO' in environ:
+    ON_HEROKU = True
+else:
+    ON_HEROKU = False
+URL = environ.get("URL", "https://daily-whale-theblackxyz9021-52efa06f.koyeb.app/") # Fill env at deoplyment time Stream Mode Is True else avoide 
 
 LOG_STR = "Current Cusomized Configurations are:-\n"
 LOG_STR += ("IMDB Results are enabled, Bot will be showing imdb details for you queries.\n" if IMDB else "IMBD Results are disabled.\n")
