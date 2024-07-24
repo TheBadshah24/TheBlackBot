@@ -26,7 +26,7 @@ from aiohttp import web
 from plugins import web_server
 # bot login 
 from bot import TheBlackBot
-from util.keepalive import ping_server
+#from util.keepalive import ping_server
 from bot.clients import initialize_clients
 
 ppath = "plugins/*.py"
@@ -52,11 +52,13 @@ async def start():
             spec.loader.exec_module(load)
             sys.modules["plugins." + plugin_name] = load
             print("The Black Imported => " + plugin_name)
-    if ON_HEROKU:
-        asyncio.create_task(ping_server())
+    #if ON_HEROKU:
+       # asyncio.create_task(ping_server())
+        asyncio def start (self):
     b_users, b_chats = await db.get_banned()
     temp.BANNED_USERS = b_users
     temp.BANNED_CHATS = b_chats
+    await super().start()
     await Media.ensure_indexes()
     me = await TheBlackBot.get_me()
     temp.ME = me.id
@@ -75,13 +77,20 @@ async def start():
     bind_address = "0.0.0.0"
     await web.TCPSite(app, bind_address, PORT).start()
     await idle()
-
+    
+async def stop(self, *args):
+        await super().stop()
+        print("Bot stopped.")
 
 if __name__ == '__main__':
     try:
         loop.run_until_complete(start())
     except KeyboardInterrupt:
         logging.info('Service Is Stop Sweety 🚏')
+
+app = Bot()
+app.run()
+
 
 # Credit @TheBlackXYZ.
 # Please Don't remove credit.
