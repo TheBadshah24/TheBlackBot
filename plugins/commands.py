@@ -20,13 +20,10 @@ BATCH_FILES = {}
 @Client.on_message(filters.command("start") & filters.incoming)
 async def start(client, message):
     if message.chat.type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
-        buttons = [[
-            InlineKeyboardButton('Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Gʀᴏᴜᴘ', url=f'http://t.me/{temp.U_NAME}?startgroup=true')
-        ],[
-            InlineKeyboardButton('Sᴜᴘᴘᴏʀᴛ Gʀᴏᴜᴘ', url="https://t.me/The_Black_XYZ_SupportChat"),
-            InlineKeyboardButton('Mᴏᴠɪᴇ Gʀᴏᴜᴘ', url='https://t.me/TheBlackXYZ_Movie_Group')
-        ],[
-            InlineKeyboardButton('TheBlackXYZBotz', url='https://t.me/TheBlackXYZBotz')
+        buttons = [[           
+            InlineKeyboardButton('✳️ Uᴩᴅᴀᴛᴇꜱ ✳️', url=f'https://t.me/{SUPPORT_CHAT}')
+            ],[
+            InlineKeyboardButton('☣️ Hᴇʟᴩ ☣️, url=f"https://t.me/{temp.U_NAME}?start=help")
         ]]
         reply_markup = InlineKeyboardMarkup(buttons)
         await message.reply(START_MESSAGE.format(user=message.from_user.mention if message.from_user else message.chat.title, bot=client.mention), reply_markup=InlineKeyboardMarkup(buttons), disable_web_page_preview=True)                    
@@ -54,7 +51,7 @@ async def start(client, message):
             InlineKeyboardButton("Hᴇʟᴩ 🕸️", callback_data="help"),
             InlineKeyboardButton("Aʙᴏᴜᴛ ✨", callback_data="about")
        ]]
-        m = await message.reply_sticker("CAACAgUAAxkBAAIMQGag0U1i4t-a-hjIXuH_YUF4kgHVAAIZAAPBJDExdIRqdS3HSoseBA") 
+       # m = await message.reply_sticker("CAACAgUAAxkBAAIMQGag0U1i4t-a-hjIXuH_YUF4kgHVAAIZAAPBJDExdIRqdS3HSoseBA") 
         await asyncio.sleep(2)
         await message.reply_photo(photo=random.choice(PICS), caption=START_MESSAGE.format(user=message.from_user.mention, bot=client.mention), reply_markup=InlineKeyboardMarkup(buttons), parse_mode=enums.ParseMode.HTML)
         return await m.delete()
@@ -95,7 +92,7 @@ async def start(client, message):
             InlineKeyboardButton("Hᴇʟᴩ 🕸️", callback_data="help"),
             InlineKeyboardButton("Aʙᴏᴜᴛ ✨", callback_data="about")
        ]]
-        m = await message.reply_sticker("CAACAgUAAxkBAAIMQGag0U1i4t-a-hjIXuH_YUF4kgHVAAIZAAPBJDExdIRqdS3HSoseBA")
+       # m = await message.reply_sticker("CAACAgUAAxkBAAIMQGag0U1i4t-a-hjIXuH_YUF4kgHVAAIZAAPBJDExdIRqdS3HSoseBA")
         await asyncio.sleep(2)
         await message.reply_photo(photo=random.choice(PICS), caption=START_MESSAGE.format(user=message.from_user.mention, bot=client.mention), reply_markup=InlineKeyboardMarkup(buttons), parse_mode=enums.ParseMode.HTML)
         return await m.delete()
