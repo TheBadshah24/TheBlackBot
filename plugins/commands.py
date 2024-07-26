@@ -12,7 +12,6 @@ from info import CHANNELS, ADMINS, AUTH_CHANNEL, LOG_CHANNEL, PICS, BATCH_FILE_C
 from utils import get_settings, get_size, is_subscribed, save_group_settings, temp
 from database.connections_mdb import active_connection
 import re
-from plugins.fsub import ForceSub
 import json
 import base64
 logger = logging.getLogger(__name__)
