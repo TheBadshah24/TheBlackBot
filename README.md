@@ -4,13 +4,33 @@
 </h1>
 
 <p align="center">
-<img src="https://graph.org/file/bb8f769a61e1b0703aed3.jpg" alt="TheBlackBot Logo"> 
+  <img src="https://graph.org/file/9c7c198f925c3851838ce.jpg" alt="TheBlackXYZ-Bot Logo">
 </p>
-
-<p align="center">
 
 <h1 align="center">
   <b> The Black Bot </b>
+</h1>
+
+<h1 align="center">
+  
+[![Stars](https://img.shields.io/github/stars/TheBlackxyz/TheBlackBot?style=flat-square&color=yellow)](https://github.com/TheBlackxyz/TheBlackBot/stargazers)
+[![Forks](https://img.shields.io/github/forks/TheBlackxyz/TheBlackBot?style=flat-square&color=orange)](https://github.com/TheBlackxyz/TheBlackBot/fork)
+[![Size](https://img.shields.io/github/repo-size/TheBlackxyz/TheBlackBot?style=flat-square&color=green)](https://github.com/TheBlackxyz/TheBlackBot)   
+[![Open Source Love svg2](https://badges.frapsoft.com/os/v2/open-source.svg?v=103)](https://github.com/TheBlackxyz/TheBlackBot)   
+[![License](https://img.shields.io/badge/License-AGPL-blue)](https://stars.medv.io/TheBlackxyz/TheBlackBot/blob/main/LICENSE)
+</h1>
+
+<h1 align="center">
+# Support Please 🥺🥺❤️
+</p>
+<p align="center">
+<a href="https://www.instagram.com/the_black_xyz?igshid=YmMyMTA2M2Y="><img alt="replit" src="https://img.shields.io/badge/-Instagram-orange?style=for-the-badge&logo=instagram&logoColor=white"/></a> <a href="https://telegram.dog/TheBlackXYZBotz/TheBlackXYZ"><img alt="Telegram" src="https://img.shields.io/badge/TheBlackXYZBotz-2CA5E0?style=for-the-badge&logo=telegram&logoColor=green"/></a>
+<a href="https://youtube.com/@TheBlackXYZ?igshid=YmMyMTA2M2Y="><img alt="replit" src="https://img.shields.io/badge/-youtube-red?style=for-the-badge&logo=youtube&logoColor=white"/></a>
+</p>
+</h1>
+
+<h1 align="center">
+<a href="https://www.buymeacoffee.com/TheBlackXYZBotz" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-violet.png" alt="Buy Me A Coffee" style="height: 60px !important;width: 217px !important;" ></a>
 </h1>
 
 
@@ -75,7 +95,7 @@
 <details>
 <summary><b>Deploy to Heroku</b></summary>
 
-<a href="https://youtu.be/uv0WHxwHwfo"><img src="https://img.shields.io/badge/watch%20Heroku%20Tutorial-red.svg?logo=Youtube"></a>                
+<a href="https://youtu.com/TheBlackXYZ24"><img src="https://img.shields.io/badge/watch%20Heroku%20Tutorial-red.svg?logo=Youtube"></a>                
 
 [![Deploy](https://www.herokucdn.com/deploy/button.svg)](https://heroku.com/deploy?template=https://github.com/TheBlackxyz/PROFESSOR-BOT)
 </details>
@@ -116,12 +136,4 @@ unban_user  - to unban a user.
 channel - to get list of total connected channels
 broadcast - to broadcast a message to all Eva Maria users
 ```
-
-# SUPPORT PLEASE 🥺🥺❤️
-</p>
-<p align="center">
-<a href="https://www.instagram.com/the_black_xyz?igshid=YmMyMTA2M2Y="><img alt="replit" src="https://img.shields.io/badge/-Instagram-orange?style=for-the-badge&logo=instagram&logoColor=white"/></a> <a href="https://telegram.dog/TheBlackXYZBotz/TheBlackXYZ"><img alt="Telegram" src="https://img.shields.io/badge/TheBlackXYZBotz-2CA5E0?style=for-the-badge&logo=telegram&logoColor=green"/></a>
-<a href="https://youtube.com/@TheBlackXYZ?igshid=YmMyMTA2M2Y="><img alt="replit" src="https://img.shields.io/badge/-youtube-red?style=for-the-badge&logo=youtube&logoColor=white"/></a>
-</p>
-
 
