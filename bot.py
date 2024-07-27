@@ -69,7 +69,7 @@ async def start():
     temp.U_NAME = me.username
     temp.B_NAME = me.first_name
     TheBlackBot.username = '@' + me.username
-    logger.info(LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
+    logging.info(LOG_STR)
     tz = pytz.timezone('Asia/Kolkata')
     today = date.today()
     now = datetime.now(tz)
