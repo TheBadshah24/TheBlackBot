@@ -11,6 +11,7 @@ def is_enabled(value, default):
 
 
 # PyroClient Setup 
+SESSION = environ.get('SESSION', 'TheBlackBot')
 API_ID = int(environ['API_ID'])
 API_HASH = environ['API_HASH']
 BOT_TOKEN = environ['BOT_TOKEN']
