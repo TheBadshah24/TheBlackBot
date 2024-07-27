@@ -8,5 +8,5 @@ RUN cd /
 RUN pip3 install -U pip && pip3 install -U -r requirements.txt
 RUN mkdir /TheBlackBot
 WORKDIR /TheBlackBot
-COPY 
-CMD ["python bot.py"]
+COPY . /TheBlackBot
+CMD ["python", "bot.py"]
