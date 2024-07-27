@@ -31,7 +31,7 @@ from bot.clients import initialize_clients
 import os, math, datetime
 from pyrogram.errors import BadRequest, Unauthorized
 from pyrogram import types
-from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL, UPTIME, WEB_SUPPORT, LOG_MSG
+from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL, UPTIME, WEB_SUPPORT, LOG_STR
 from utils import temp, __repo__, __license__, __copyright__, __version__
 
 ppath = "plugins/*.py"
