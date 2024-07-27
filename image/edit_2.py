@@ -2,7 +2,7 @@ from PIL import Image, ImageEnhance, ImageDraw
 from pyrogram.enums import ChatAction
 import numpy as np
 import os
-from opencv-python import cv2
+import cv2
 import shutil
 
 async def circle_with_bg(client, message):
