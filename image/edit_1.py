@@ -1,7 +1,7 @@
 from PIL import Image, ImageEnhance, ImageFilter 
 from pyrogram.enums import ChatAction
 import shutil
-from opencv-python import  cv2
+import cv2
 import os
 
 async def bright(client, message):
