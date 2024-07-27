@@ -1,3 +1,4 @@
+yt-dlp==2023.2.17
 git+https://github.com/TheBlackxyz/cinemagoer
 pyrofork
 tgcrypto 
@@ -8,7 +9,7 @@ pytz
 aiohttp
 yt-dlp
 youtube-dl
-NumPy
+NumPy==1.26
 wheel 
 ujson 
 wget 
