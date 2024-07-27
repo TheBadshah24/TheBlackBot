@@ -65,16 +65,16 @@ async def start():
     await Media.ensure_indexes()
     me = await TheBlackBot.get_me()
     temp.ME = me.id
+    temp.uptime = UPTIME
     temp.U_NAME = me.username
     temp.B_NAME = me.first_name
     TheBlackBot.username = '@' + me.username
-    logging.info(LOG_STR)
-    logging.info(script.LOGO)
+    logger.info(LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
     tz = pytz.timezone('Asia/Kolkata')
     today = date.today()
     now = datetime.now(tz)
     time = now.strftime("%H:%M:%S %p")
-    await TheBlackBot.send_message(chat_id=LOG_CHANNEL, text=script.RESTART_TXT.format(today, time))
+    await TheBlackBot.send_message(chat_id=LOG_CHANNEL, text=LOG_MSG.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
     app = web.AppRunner(await web_server())
     await app.setup()
     bind_address = "0.0.0.0"
