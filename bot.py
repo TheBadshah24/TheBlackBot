@@ -17,7 +17,6 @@ from pyrogram import Client, idle
 from pyromod import listen
 from database.ia_filterdb import Media
 from database.users_chats_db import db
-from info import *
 from utils import temp
 from typing import Union, Optional, AsyncGenerator
 from Script import script 
@@ -28,6 +27,12 @@ from plugins import web_server
 from bot import TheBlackBot
 from util.keepalive import ping_server
 from bot.clients import initialize_clients
+# old bot.py
+import os, math, datetime
+from pyrogram.errors import BadRequest, Unauthorized
+from pyrogram import types
+from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL, UPTIME, WEB_SUPPORT, LOG_MSG
+from utils import temp, __repo__, __license__, __copyright__, __version__
 
 ppath = "plugins/*.py"
 files = glob.glob(ppath)
