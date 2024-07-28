@@ -20,7 +20,7 @@ from database.users_chats_db import db
 from utils import temp
 from typing import Union, Optional, AsyncGenerator
 from Script import script 
-#from datetime import date, datetime 
+from datetime import date, datetime 
 from aiohttp import web
 from plugins import web_server
 # bot login info
@@ -29,7 +29,7 @@ from bot import TheBlackBot
 from util.keepalive import ping_server
 from bot.clients import initialize_clients
 # old bot.py
-import os, math, datetime
+import os, math
 from pyrogram.errors import BadRequest, Unauthorized
 from pyrogram import types
 from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL, UPTIME, WEB_SUPPORT, LOG_STR
@@ -58,7 +58,7 @@ async def start():
             spec.loader.exec_module(load)
             sys.modules["plugins." + plugin_name] = load
             print("The Black Imported => " + plugin_name)
-   # if ON_HEROKU:
+     if ON_HEROKU:
         asyncio.create_task(ping_server())
     b_users, b_chats = await db.get_banned()
     temp.BANNED_USERS = b_users
@@ -75,7 +75,7 @@ async def start():
     today = date.today()
     now = datetime.now(tz)
     time = now.strftime("%H:%M:%S %p")
-    await TheBlackBot.send_message(chat_id=LOG_CHANNEL, text=LOG_STR.format(me.first_name, date, time, __repo__, __version__, __license__, __copyright__))
+    await TheBlackBot.send_message(chat_id=LOG_CHANNEL, text=LOG_STR.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
     app = web.AppRunner(await web_server())
     await app.setup()
     bind_address = "0.0.0.0"
