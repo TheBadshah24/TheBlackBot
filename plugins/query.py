@@ -1,39 +1,39 @@
-import asyncio, re, ast, time, math, logging, random, pyrogram, shutil, psutil
+import asyncio, re, ast, math, logging, random, pyrogram
 
-# Pyrogram Functions
-from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, WebpageMediaEmpty
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+# pyrogram functions
+from pyrogram.errors.exceptions.bad_request_400 import MediaEmpty, PhotoInvalidDimensions, WebpageMediaEmpty
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery, InputMediaPhoto
 from pyrogram import Client, filters, enums 
 from pyrogram.errors import FloodWait, UserIsBlocked, MessageNotModified, PeerIdInvalid
 
-# Helper Function
-from Script import script
-from utils import get_size, is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings, get_shortlink, get_time, humanbytes 
 
-# Database Function 
+from Script import script
 from database.connections_mdb import active_connection, all_connections, delete_connection, if_active, make_active, make_inactive
-from database.ia_filterdb import Media, get_file_details, get_search_results
+from utils import get_size, is_subscribed, get_poster, search_gagala, temp, get_settings, save_group_settings, get_shortlink
+from database.users_chats_db import db
+from database.ia_filterdb import Media, get_file_details, get_search_results, get_all_files
 from database.filters_mdb import del_all, find_filter, get_filters
 from database.gfilters_mdb import find_gfilter, get_gfilters
-from database.users_chats_db import db
+from utils.admin_check import admin_fliter
 
-# Info.py
-from info import ADMINS, AUTH_CHANNEL, AUTH_USERS, CUSTOM_FILE_CAPTION, AUTH_GROUPS, P_TTI_SHOW_OFF, PICS, IMDB, PM_IMDB, SINGLE_BUTTON, PROTECT_CONTENT, SPELL_CHECK_REPLY, IMDB_TEMPLATE, IMDB_DELET_TIME, START_MESSAGE, PMFILTER, G_FILTER, BUTTON_LOCK, BUTTON_LOCK_TEXT, SHORT_URL, SHORT_API
-
+# configuration
+from info import ADMINS, AUTH_CHANNEL, AUTH_USERS, CUSTOM_FILE_CAPTION, AUTH_GROUPS, P_TTI_SHOW_OFF, PICS, IMDB, PM_IMDB, SINGLE_BUTTON, PROTECT_CONTENT, \
+    SPELL_CHECK_REPLY, IMDB_TEMPLATE, IMDB_DELET_TIME, START_MESSAGE, PMFILTER, G_FILTER, BUTTON_LOCK, BUTTON_LOCK_TEXT, SHORT_URL, SHORT_API
+from info import REQ_CHANNEL
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.ERROR)
-lock = asyncio.Lock()
+
 
 
 @Client.on_callback_query()
 async def cb_handler(client: Client, query: CallbackQuery):
     if query.data == "close_data":
         await query.message.delete()
-        
     elif query.data == "delallconfirm":
         userid = query.from_user.id
         chat_type = query.message.chat.type
+
         if chat_type == enums.ChatType.PRIVATE:
             grpid = await active_connection(str(userid))
             if grpid is not None:
@@ -42,82 +42,147 @@ async def cb_handler(client: Client, query: CallbackQuery):
                     chat = await client.get_chat(grpid)
                     title = chat.title
                 except:
-                    return await query.message.edit_text("Make Sure I'm Present In Your Group!!", quote=True)
+                    await query.message.edit_text("Make sure I'm present in your group!!", quote=True)
+                    return await query.answer('𝙿𝙻𝙴𝙰𝚂𝙴 𝚂𝙷𝙰𝚁𝙴 𝙰𝙽𝙳 𝚂𝚄𝙿𝙿𝙾𝚁𝚃')
             else:
-                return await query.message.edit_text("I'm Not Connected To Any Groups!\ncheck /Connections Or Connect To Any Groups", quote=True)
+                await query.message.edit_text(
+                    "I'm not connected to any groups!\nCheck /connections or connect to any groups",
+                    quote=True
+                )
+                return
         elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
             grp_id = query.message.chat.id
             title = query.message.chat.title
-        else: return
+
+        else:
+            return
+
         st = await client.get_chat_member(grp_id, userid)
-        if (st.status == enums.ChatMemberStatus.OWNER) or (str(userid) in ADMINS): await del_all(query.message, grp_id, title)
-        else: await query.answer("You Need To Be Group Owner Or An Auth User To Do That!", show_alert=True)
-        
+        if (st.status == enums.ChatMemberStatus.OWNER) or (str(userid) in ADMINS):
+            await del_all(query.message, grp_id, title)
+        else:
+            await query.answer("You need to be Group Owner or an Auth User to do that!", show_alert=True)
     elif query.data == "delallcancel":
         userid = query.from_user.id
         chat_type = query.message.chat.type
+
         if chat_type == enums.ChatType.PRIVATE:
             await query.message.reply_to_message.delete()
             await query.message.delete()
+
         elif chat_type in [enums.ChatType.GROUP, enums.ChatType.SUPERGROUP]:
             grp_id = query.message.chat.id
             st = await client.get_chat_member(grp_id, userid)
             if (st.status == enums.ChatMemberStatus.OWNER) or (str(userid) in ADMINS):
                 await query.message.delete()
-                try: await query.message.reply_to_message.delete()
-                except: pass
-            else: await query.answer("Buddy Don't Touch Others Property 😁", show_alert=True)
-            
+                try:
+                    await query.message.reply_to_message.delete()
+                except:
+                    pass
+            else:
+                await query.answer("Buddy Don't Touch Others Property 😁", show_alert=True)
     elif "groupcb" in query.data:
+        await query.answer()
+
         group_id = query.data.split(":")[1]
+
         act = query.data.split(":")[2]
         hr = await client.get_chat(int(group_id))
         title = hr.title
         user_id = query.from_user.id
+
         if act == "":
-            stat = "Connect"
+            stat = "𝙲𝙾𝙽𝙽𝙴𝙲𝚃"
             cb = "connectcb"
         else:
-            stat = "Disconnect"
+            stat = "𝙳𝙸𝚂𝙲𝙾𝙽𝙽𝙴𝙲𝚃"
             cb = "disconnect"
-        keyboard = InlineKeyboardMarkup([[
-            InlineKeyboardButton(f"{stat}", callback_data=f"{cb}:{group_id}"),
-            InlineKeyboardButton("Delete", callback_data=f"deletecb:{group_id}")
-            ],[
-            InlineKeyboardButton("Back", callback_data="backcb")]
+
+        keyboard = InlineKeyboardMarkup([
+            [InlineKeyboardButton(f"{stat}", callback_data=f"{cb}:{group_id}"),
+             InlineKeyboardButton("𝙳𝙴𝙻𝙴𝚃𝙴", callback_data=f"deletecb:{group_id}")],
+            [InlineKeyboardButton("𝙱𝙰𝙲𝙺", callback_data="backcb")]
         ])
-        await query.message.edit_text(f"Group Name:- **{title}**\nGroup Id:- `{group_id}`", reply_markup=keyboard, parse_mode=enums.ParseMode.MARKDOWN)
-      
+
+        await query.message.edit_text(
+            f"𝙶𝚁𝙾𝚄𝙿 𝙽𝙰𝙼𝙴 :- **{title}**\n𝙶𝚁𝙾𝚄𝙿 𝙸𝙳 :- `{group_id}`",
+            reply_markup=keyboard,
+            parse_mode=enums.ParseMode.MARKDOWN
+        )
+        return await query.answer('𝙿𝙻𝙴𝙰𝚂𝙴 𝚂𝙷𝙰𝚁𝙴 𝙰𝙽𝙳 𝚂𝚄𝙿𝙿𝙾𝚁𝚃')
     elif "connectcb" in query.data:
+        await query.answer()
+
         group_id = query.data.split(":")[1]
+
         hr = await client.get_chat(int(group_id))
+        
         title = hr.title
+
         user_id = query.from_user.id
+
         mkact = await make_active(str(user_id), str(group_id))
-        if mkact: await query.message.edit_text(f"Connected To: **{title}**", parse_mode=enums.ParseMode.MARKDOWN,)
-        else: await query.message.edit_text('Some Error Occurred!!', parse_mode="md")
-       
+
+        if mkact:
+            await query.message.edit_text(
+                f"𝙲𝙾𝙽𝙽𝙴𝙲𝚃𝙴𝙳 𝚃𝙾 **{title}**",
+                parse_mode=enums.ParseMode.MARKDOWN,
+            )
+        else:
+            await query.message.edit_text('Some error occurred!!', parse_mode="md")
+        return await query.answer('𝙿𝙻𝙴𝙰𝚂𝙴 𝚂𝙷𝙰𝚁𝙴 𝙰𝙽𝙳 𝚂𝚄𝙿𝙿𝙾𝚁𝚃')
     elif "disconnect" in query.data:
+        await query.answer()
+
         group_id = query.data.split(":")[1]
+
         hr = await client.get_chat(int(group_id))
+
         title = hr.title
         user_id = query.from_user.id
+
         mkinact = await make_inactive(str(user_id))
-        if mkinact: await query.message.edit_text(f"Disconnected From **{title}**", parse_mode=enums.ParseMode.MARKDOWN)
-        else: await query.message.edit_text(f"Some Error Occurred!!", parse_mode=enums.ParseMode.MARKDOWN)
-      
+
+        if mkinact:
+            await query.message.edit_text(
+                f"Disconnected from **{title}**",
+                parse_mode=enums.ParseMode.MARKDOWN
+            )
+        else:
+            await query.message.edit_text(
+                f"Some error occurred!!",
+                parse_mode=enums.ParseMode.MARKDOWN
+            )
+        return
     elif "deletecb" in query.data:
+        await query.answer()
+
         user_id = query.from_user.id
         group_id = query.data.split(":")[1]
+
         delcon = await delete_connection(str(user_id), str(group_id))
-        if delcon: await query.message.edit_text("Successfully Deleted Connection")
-        else: await query.message.edit_text(f"Some Error Occurred!!", parse_mode=enums.ParseMode.MARKDOWN)
-       
+
+        if delcon:
+            await query.message.edit_text(
+                "Successfully deleted connection"
+            )
+        else:
+            await query.message.edit_text(
+                f"Some error occurred!!",
+                parse_mode=enums.ParseMode.MARKDOWN
+            )
+        return await query.answer('𝙿𝙻𝙴𝙰𝚂𝙴 𝚂𝙷𝙰𝚁𝙴 𝙰𝙽𝙳 𝚂𝚄𝙿𝙿𝙾𝚁𝚃')
     elif query.data == "backcb":
+        await query.answer()
+
         userid = query.from_user.id
+
         groupids = await all_connections(str(userid))
         if groupids is None:
-            return await query.message.edit_text("There Are No Active Connections!! Connect To Some Groups First.")
+            await query.message.edit_text(
+                "There are no active connections!! Connect to some groups first.",
+            )
+            return await query.answer('𝙿𝙻𝙴𝙰𝚂𝙴 𝚂𝙷𝙰𝚁𝙴 𝙰𝙽𝙳 𝚂𝚄𝙿𝙿𝙾𝚁𝚃')
         buttons = []
         for groupid in groupids:
             try:
@@ -125,10 +190,20 @@ async def cb_handler(client: Client, query: CallbackQuery):
                 title = ttl.title
                 active = await if_active(str(userid), str(groupid))
                 act = " - ACTIVE" if active else ""
-                buttons.append([InlineKeyboardButton(f"{title}{act}", callback_data=f"groupcb:{groupid}:{act}")])
-            except: pass
-        if buttons: await query.message.edit_text("Your Connected Group Details ;\n\n", reply_markup=InlineKeyboardMarkup(buttons))
-            
+                buttons.append(
+                    [
+                        InlineKeyboardButton(
+                            text=f"{title}{act}", callback_data=f"groupcb:{groupid}:{act}"
+                        )
+                    ]
+                )
+            except:
+                pass
+        if buttons:
+            await query.message.edit_text(
+                "Your connected group details ;\n\n",
+                reply_markup=InlineKeyboardMarkup(buttons)
+            )
     elif "alertmessage" in query.data:
         grp_id = query.message.chat.id
         i = query.data.split(":")[1]
@@ -139,7 +214,6 @@ async def cb_handler(client: Client, query: CallbackQuery):
             alert = alerts[int(i)]
             alert = alert.replace("\\n", "\n").replace("\\t", "\t")
             await query.answer(alert, show_alert=True)
-            
     elif "galert" in query.data:
         i = query.data.split(":")[1]
         keyword = query.data.split(":")[2]             
@@ -153,71 +227,81 @@ async def cb_handler(client: Client, query: CallbackQuery):
     if query.data.startswith("pmfile"):
         ident, file_id = query.data.split("#")
         files_ = await get_file_details(file_id)
-        if not files_: return await query.answer('No Such File Exist.')
+        if not files_:
+            return await query.answer('No such file exist.')
         files = files_[0]
         title = files.file_name
         size = get_size(files.file_size)
-        f_caption = f_caption = f"{title}"
+        f_caption = files.caption
         if CUSTOM_FILE_CAPTION:
-            try: f_caption = CUSTOM_FILE_CAPTION.format(mention=query.from_user.mention, file_name='' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption)                                                                                                      
-            except Exception as e: logger.exception(e)
+            try:
+                f_caption = CUSTOM_FILE_CAPTION.format(mention=query.from_user.mention, file_name='' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption)                                                                                                      
+            except Exception as e:
+                logger.exception(e)
+            f_caption = f_caption
+        if f_caption is None:
+            f_caption = f"{files.file_name}"    
         try:                  
-            if AUTH_CHANNEL and not await is_subscribed(client, query):
+            if (AUTH_CHANNEL or REQ_CHANNEL) and not await is_subscribed(client, query):
                 return await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
             else:
-                await client.send_cached_media(chat_id=query.from_user.id, file_id=file_id, caption=f_caption, protect_content=True if ident == "pmfilep" else False)                       
+                await client.send_cached_media(
+                    chat_id=query.from_user.id,
+                    file_id=file_id,
+                    caption=f_caption,
+                    protect_content=True if ident == "pmfilep" else False                    
+                )                       
         except Exception as e:
-            await query.answer(f"⚠️ Eʀʀᴏʀ {e}", show_alert=True)
+            await query.answer(f"⚠️ Error {e}", show_alert=True)
         
     if query.data.startswith("file"):        
         ident, req, file_id = query.data.split("#")
         if BUTTON_LOCK:
             if int(req) not in [query.from_user.id, 0]:
-                return await query.answer(BUTTON_LOCK_TEXT.format(query=query.from_user.first_name), show_alert=True)
+                return await query.answer(BUTTON_LOCK_TEXT.format(query=query.from_user.first_name), show_alert=True)             
         files_ = await get_file_details(file_id)
-        if not files_: return await query.answer('No Such File Exist.')
+        if not files_:
+            return await query.answer('No such file exist.')
         files = files_[0]
         title = files.file_name
         size = get_size(files.file_size)
-        f_caption = f_caption = f"{title}"
+        f_caption = files.caption
         settings = await get_settings(query.message.chat.id)
         if CUSTOM_FILE_CAPTION:
-            try: f_caption = CUSTOM_FILE_CAPTION.format(mention=query.from_user.mention, file_name='' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption)                               
-            except Exception as e: logger.exception(e)
+            try:
+                f_caption = CUSTOM_FILE_CAPTION.format(mention=query.from_user.mention, file_name='' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption)                               
+            except Exception as e:
+                logger.exception(e)
+            f_caption = f_caption
+        if f_caption is None:
+            f_caption = f"{files.file_name}"        
         try:
-            if AUTH_CHANNEL and not await is_subscribed(client, query):
-                return await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
+            if (AUTH_CHANNEL or REQ_CHANNEL) and not await is_subscribed(client, query):
+                await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
+                return
             elif settings['botpm']:
-                return await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
+                await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
+                return
             else:
-                await client.send_cached_media(chat_id=query.from_user.id, file_id=file_id, caption=f_caption, protect_content=True if ident == "filep" else False)
-                await query.answer('Cʜᴇᴄᴋ PM, I Hᴀᴠᴇ Sᴇɴᴛ Fɪʟᴇs Iɴ Pᴍ', show_alert=True)
+                await client.send_cached_media(
+                    chat_id=query.from_user.id,
+                    file_id=file_id,
+                    caption=f_caption,
+                    protect_content=True if ident == "filep" else False 
+                )
+                await query.answer('Check PM, I have sent files in pm', show_alert=True)
         except UserIsBlocked:
-            await query.answer('Uɴʙʟᴏᴄᴋ Tʜᴇ Bᴏᴛ Mᴀʜɴ !', show_alert=True)
+            await query.answer('Unblock the bot mahn !', show_alert=True)
         except PeerIdInvalid:
             await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
         except Exception as e:
             await query.answer(url=f"https://t.me/{temp.U_NAME}?start={ident}_{file_id}")
      
-    elif query.data.startswith("checksub"):
-        if AUTH_CHANNEL and not await is_subscribed(client, query):
-            return await query.answer("I Lɪᴋᴇ Yᴏᴜʀ Sᴍᴀʀᴛɴᴇss, Bᴜᴛ Dᴏɴ'ᴛ Bᴇ Oᴠᴇʀsᴍᴀʀᴛ Oᴋᴀʏ 😏", show_alert=True)
-        ident, file_id = query.data.split("#")
-        files_ = await get_file_details(file_id)
-        if not files_: return await query.answer('NO SUCH FILE EXIST....')
-        files = files_[0]
-        title = files.file_name
-        size = get_size(files.file_size)
-        f_caption = f_caption = f"{title}"
-        if CUSTOM_FILE_CAPTION:
-            try: f_caption = CUSTOM_FILE_CAPTION.format(mention=query.from_user.mention, file_name='' if title is None else title, file_size='' if size is None else size, file_caption='' if f_caption is None else f_caption)  
-            except Exception as e: logger.exception(e)
-        await client.send_cached_media(chat_id=query.from_user.id, file_id=file_id, caption=f_caption, protect_content=True if ident == 'checksubp' else False)
-
-    elif query.data == "start":                        
-        buttons = [[
-            InlineKeyboardButton("➕️ 𝙰𝙳𝙳 𝙼𝙴 𝚃𝙾 𝚈𝙾𝚄𝚁 𝙶𝚁𝙾𝚄𝙿 ➕️", url=f"http://t.me/{temp.U_NAME}?startgroup=true")
-            ],[
+        
+        elif query.data == "start":                        
+        buttons = [[ 
+            InlineKeyboardButton("➕️ Aᴅᴅ Mᴇ Tᴏ Yᴏᴜʀ Cʜᴀᴛ ➕", url=f"http://t.me/{temp.U_NAME}?startgroup=true")
+           ],[
             InlineKeyboardButton("🔍 𝚂𝙴𝙰𝚁𝙲𝙷 🔍", switch_inline_query_current_chat=''), 
             InlineKeyboardButton("📢 𝚄𝙿𝙳𝙰𝚃𝙴𝚂 📢", url="https://t.me/PixelPartyUpdates")
             ],[
@@ -231,131 +315,267 @@ async def cb_handler(client: Client, query: CallbackQuery):
         )
     elif query.data == "help":
         buttons = [[
-            InlineKeyboardButton('⚙️ Aᴅᴍɪɴ Pᴀɴᴇʟ ⚙️', 'admin')            
+            InlineKeyboardButton('⚙️ 𝙰𝙳𝙼𝙸𝙽 𝙿𝙰𝙽𝙴𝙻 ⚙️', callback_data='admin')            
             ],[
-            InlineKeyboardButton('Fɪʟᴛᴇʀꜱ', 'openfilter'),
-            InlineKeyboardButton('Cᴏɴɴᴇᴄᴛ', 'coct')
+            InlineKeyboardButton('𝙼𝙰𝙽𝚄𝙴𝙻 𝙵𝙸𝙻𝚃𝙴𝚁', callback_data='manuelfilter'),
+            InlineKeyboardButton('𝙰𝚄𝚃𝙾 𝙵𝙸𝙻𝚃𝙴𝚁', callback_data='autofilter'),
+            InlineKeyboardButton('𝙲𝙾𝙽𝙽𝙴𝙲𝚃𝙸𝙾𝙽𝚂', callback_data='coct')
             ],[                       
-            InlineKeyboardButton('Fɪʟᴇ Sᴛᴏʀᴇ', 'newdata'),
-            InlineKeyboardButton('Exᴛʀᴀ Mᴏᴅᴇ', 'extmod')
+            InlineKeyboardButton('𝚃𝙴𝙻𝙴𝙶𝚁𝙰𝙿𝙷', callback_data='tele'),
+            InlineKeyboardButton('𝚂𝙷𝙰𝚁𝙴-𝚃𝙴𝚇𝚃', callback_data='sharetxt'),
+            InlineKeyboardButton('𝙵𝙸𝙻𝙴-𝚂𝚃𝙾𝚁𝙴', callback_data='newdata')
             ],[           
-            InlineKeyboardButton('Gʀᴏᴜᴩ Mᴀɴᴀɢᴇʀ', 'gpmanager'), 
-            InlineKeyboardButton('Bᴏᴛ Sᴛᴀᴛᴜꜱ ❄️', 'stats')
+            InlineKeyboardButton('𝙹𝚂𝙾𝙽𝙴', callback_data='son'),
+            InlineKeyboardButton('𝚃𝚃𝚂', callback_data='ttss'),           
+            InlineKeyboardButton('𝙿𝚄𝚁𝙶𝙴', callback_data='purges')
             ],[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'start')           
+            InlineKeyboardButton('𝙿𝙰𝚂𝚃𝙴', callback_data='pastes'),
+            InlineKeyboardButton("𝙸𝙼𝙰𝙶𝙴", callback_data='image'),
+            InlineKeyboardButton('𝙿𝙸𝙽𝙶', callback_data='pings')                                   
+            ],[                               
+            InlineKeyboardButton('𝙼𝚄𝚃𝙴', callback_data='restric'),
+            InlineKeyboardButton('𝙺𝙸𝙲𝙺', callback_data='zombies'),
+            InlineKeyboardButton('𝙿𝙸𝙽', callback_data='pin')
+            ],[
+            InlineKeyboardButton('𝙲𝙰𝚁𝙱𝙾𝙽', callback_data='carb'),
+            InlineKeyboardButton('𝙵𝙾𝙽𝙳', callback_data='fond'),
+            InlineKeyboardButton('𝚈𝚃-𝙳𝙻', callback_data='ytdl')
+            ],[
+            InlineKeyboardButton('🔮 𝚂𝚃𝙰𝚃𝚄𝚂 🔮', callback_data='stats')
+            ],[
+            InlineKeyboardButton('🚫 𝙲𝙻𝙾𝚂𝙴', callback_data='close_data'),
+            InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start')           
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.HELP_TXT.format(query.from_user.mention), enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))     
-        
+        reply_markup = InlineKeyboardMarkup(buttons)             
+        await query.edit_message_media(  
+            InputMediaPhoto(random.choice(PICS), script.EXTRAMOD_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,           
+        )
     elif query.data == "about":
         buttons= [[
-            InlineKeyboardButton('Sᴏᴜʀᴄᴇ Cᴏᴅᴇ 📜', 'source')
-            ],[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'start')          
+            InlineKeyboardButton('🏠 𝙷𝙾𝙼𝙴 🏠', callback_data='start'),
+            InlineKeyboardButton('🔐 𝙲𝙻𝙾𝚂𝙴 🔐', callback_data='close_data')
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.ABOUT_TXT.format(temp.B_NAME), enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-        
+        reply_markup = InlineKeyboardMarkup(buttons)        
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.ABOUT_TXT.format(temp.B_NAME), enums.ParseMode.HTML),
+            reply_markup=reply_markup,           
+        )
     elif query.data == "source":
         buttons = [[
-            InlineKeyboardButton('ꜱᴏᴜʀᴄᴇ ᴄᴏᴅᴇ', url='https://github.com/TheBlackxyz/PROFESSOR-BOT')
-            ],[
-            InlineKeyboardButton('‹ Bᴀᴄᴋ', 'about')
+            InlineKeyboardButton('👩‍🦯 Back', callback_data='about')
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.SOURCE_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-      
-    elif query.data == "admin":
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.SOURCE_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,            
+        )
+    elif query.data == "restric":
         buttons = [[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'help')           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
         ]]
-        if query.from_user.id not in ADMINS:
-            return await query.answer("Sᴏʀʀʏ Tʜɪs Mᴇɴᴜ Oɴʟʏ Fᴏʀ Mʏ Aᴅᴍɪɴs ⚒️", show_alert=True)
-        await query.message.edit("Pʀᴏᴄᴇꜱꜱɪɴɢ Wᴀɪᴛ Fᴏʀ 15 ꜱᴇᴄ...")
-        total, used, free = shutil.disk_usage(".")
-        stats = script.SERVER_STATS.format(get_time(time.time() - client.uptime), psutil.cpu_percent(), psutil.virtual_memory().percent, humanbytes(total), humanbytes(used), psutil.disk_usage('/').percent, humanbytes(free))            
-        stats_pic = await make_carbon(stats, True)
-        await query.edit_message_media(InputMediaPhoto(stats_pic, script.ADMIN_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-        
-    elif query.data == "openfilter":
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.RESTRIC_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,            
+        )
+    elif query.data == "image":
         buttons = [[
-            InlineKeyboardButton('AᴜᴛᴏFɪʟᴛᴇʀ', 'autofilter'),
-            InlineKeyboardButton('MᴀɴᴜᴀʟFɪʟᴛᴇʀ', 'manuelfilter')
-            ],[
-            InlineKeyboardButton('GʟᴏʙᴀʟFɪʟᴛᴇʀ', 'globalfilter')
-            ],[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'help')           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.FILTER_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-        
-    elif query.data == "autofilter":
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.IMAGE_TXT.format(temp.B_NAME), enums.ParseMode.HTML),            
+            reply_markup=reply_markup,
+        ) 
+    elif query.data == "ytdl":
         buttons = [[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'openfilter')           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.AUTOFILTER_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-        
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.YTDL, enums.ParseMode.HTML),            
+            reply_markup=reply_markup,
+        )  
+    elif query.data == "sharetxt":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.SHARE_TXT, enums.ParseMode.HTML),           
+            reply_markup=reply_markup,
+        )      
+    elif query.data == "zombies":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.ZOMBIES_TXT, enums.ParseMode.HTML),           
+            reply_markup=reply_markup,
+        )    
+    elif query.data == "pin":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.PIN_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "son":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.JSON_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "pastes":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.PASTE_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "pings":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.PINGS_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "ttss":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.TTS_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "purges":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.PURGE_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "tele":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.TELE_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )             
     elif query.data == "manuelfilter":
         buttons = [[
-            InlineKeyboardButton('Bᴜᴛᴛᴏɴ Fᴏʀᴍᴀᴛ', 'button')
-            ],[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'openfilter')           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help'),
+            InlineKeyboardButton('𝙱𝚄𝚃𝚃𝙾𝙽𝚂', callback_data='button')
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.MANUELFILTER_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-        
-    elif query.data == "globalfilter":
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.MANUELFILTER_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "button":
         buttons = [[
-            InlineKeyboardButton('Bᴜᴛᴛᴏɴ Fᴏʀᴍᴀᴛ', 'buttong')
-            ],[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'openfilter')           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='manuelfilter')
         ]]
-        if query.from_user.id not in ADMINS:
-            return await query.answer("Sᴏʀʀʏ Tʜɪs Mᴇɴᴜ Oɴʟʏ Fᴏʀ Mʏ Aᴅᴍɪɴs ⚒️", show_alert=True)
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.GLOBALFILTER_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-        
-    elif query.data.startswith("button"):
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.BUTTON_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "autofilter":
         buttons = [[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', f"{'manuelfilter' if query.data == 'button' else 'globalfilter'}")           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.BUTTON_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-   
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.AUTOFILTER_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
     elif query.data == "coct":
         buttons = [[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'help')           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.CONNECTION_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-         
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.CONNECTION_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )   
+
+    elif query.data == "admin":
+        buttons = [[
+            InlineKeyboardButton('𝙶𝙻𝙾𝙱𝙰𝙻 𝙵𝙸𝙻𝚃𝙴𝚁', callback_data='gfill'),
+            InlineKeyboardButton('𝚄𝚂𝙴𝚁 & 𝙲𝙷𝙰𝚃', callback_data='uschat')
+            ],[
+            InlineKeyboardButton('🔙 𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        if query.from_user.id in ADMINS:
+            await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.ADMIN_TXT, enums.ParseMode.HTML), reply_markup=reply_markup)
+        else:
+            await query.answer("Your Not Authorizer ⚠️", show_alert=True)
+
+    elif query.data == "gfill":
+        buttons = [[            
+            InlineKeyboardButton('🔙 𝙱𝙰𝙲𝙺', callback_data='admin')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)        
+        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.G_FIL_TXT, enums.ParseMode.HTML), reply_markup=reply_markup)
+        
+    elif query.data == "uschat":
+        buttons = [[            
+            InlineKeyboardButton('🔙 𝙱𝙰𝙲𝙺', callback_data='admin')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)        
+        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.US_CHAT_TXT, enums.ParseMode.HTML), reply_markup=reply_markup)
+       
+    elif query.data == "carb":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.CARB_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )      
+    elif query.data == "fond":
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.FOND_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )       
     elif query.data == "newdata":
         buttons = [[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'help')           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help')
         ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.FILE_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-        
-    elif query.data == "extmod":
-        buttons = [[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'help')           
-        ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.EXTRAMOD_TXT, enums.ParseMode.HTML),             reply_markup=InlineKeyboardMarkup(buttons))
-        
-    elif query.data == "gpmanager":
-        buttons = [[
-            InlineKeyboardButton('✘ Cʟᴏꜱᴇ', 'close_data'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'help')           
-        ]]
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.GROUPMANAGER_TXT, enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))           
-        
+        reply_markup = InlineKeyboardMarkup(buttons)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.FILE_TXT, enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
     elif query.data == "stats":
         buttons = [[
-            InlineKeyboardButton('⟳ Rᴇꜰʀᴇꜱʜ', 'stats'),
-            InlineKeyboardButton('« Bᴀᴄᴋ', 'help')           
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help'),
+            InlineKeyboardButton('𝚁𝙴𝙵𝚁𝙴𝚂𝙷', callback_data='rfrsh')
         ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
         total = await Media.count_documents()
         users = await db.total_users_count()
         chats = await db.total_chat_count()
@@ -363,16 +583,39 @@ async def cb_handler(client: Client, query: CallbackQuery):
         free = 536870912 - monsize
         monsize = get_size(monsize)
         free = get_size(free)
-        await query.message.edit('ʟᴏᴀᴅɪɴɢ....')
-        await query.edit_message_media(InputMediaPhoto(random.choice(PICS), script.STATUS_TXT.format(total, users, chats, monsize, free), enums.ParseMode.HTML), reply_markup=InlineKeyboardMarkup(buttons))
-    
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.STATUS_TXT.format(total, users, chats, monsize, free), enums.ParseMode.HTML),
+            reply_markup=reply_markup,
+        )
+    elif query.data == "rfrsh":
+        await query.answer("Fetching MongoDb DataBase")
+        buttons = [[
+            InlineKeyboardButton('𝙱𝙰𝙲𝙺', callback_data='help'),
+            InlineKeyboardButton('𝚁𝙴𝙵𝚁𝙴𝚂𝙷', callback_data='rfrsh')
+        ]]
+        reply_markup = InlineKeyboardMarkup(buttons)
+        total = await Media.count_documents()
+        users = await db.total_users_count()
+        chats = await db.total_chat_count()
+        monsize = await db.get_db_size()
+        free = 536870912 - monsize
+        monsize = get_size(monsize)
+        free = get_size(free)
+        await query.edit_message_media(
+            InputMediaPhoto(random.choice(PICS), script.STATUS_TXT.format(total, users, chats, monsize, free), enums.ParseMode.HTML),
+            reply_markup=reply_markup,          
+      )
+
     elif query.data.startswith("setgs"):
         ident, set_type, status, grp_id = query.data.split("#")
         grpid = await active_connection(str(query.from_user.id))
         if str(grp_id) != str(grpid):
-            return await query.message.edit("Yᴏᴜʀ Aᴄᴛɪᴠᴇ Cᴏɴɴᴇᴄᴛɪᴏɴ Hᴀs Bᴇᴇɴ Cʜᴀɴɢᴇᴅ. Gᴏ Tᴏ /settings")
-        if status == "True": await save_group_settings(grpid, set_type, False)
-        else: await save_group_settings(grpid, set_type, True)
+            await query.message.edit("Your Active Connection Has Been Changed. Go To /settings.")
+            return 
+        if status == "True":
+            await save_group_settings(grpid, set_type, False)
+        else:
+            await save_group_settings(grpid, set_type, True)
         settings = await get_settings(grpid)
         if settings is not None:
             buttons = [[
@@ -396,3 +639,10 @@ async def cb_handler(client: Client, query: CallbackQuery):
             ]]
             reply_markup = InlineKeyboardMarkup(buttons)
             await query.message.edit_reply_markup(reply_markup)
+
+
+
+
+
+
+
