@@ -33,7 +33,7 @@ import os, math
 from pyrogram.errors import BadRequest, Unauthorized
 from pyrogram import types
 from info import API_ID, API_HASH, BOT_TOKEN, LOG_CHANNEL, UPTIME, WEB_SUPPORT, LOG_STR
-from utils import temp, __repo__, __license__, __copyright__, __version__
+from utils import temp
 
 ppath = "plugins/*.py"
 files = glob.glob(ppath)
