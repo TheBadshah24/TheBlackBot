@@ -1,4 +1,15 @@
-import logging, os, re, asyncio, requests, aiohttp 
+#import logging, os, re, asyncio, requests, aiohttp 
+import logging 
+import asyncio
+import os
+import re
+import random
+import pytz
+import aiohttp
+import requests
+import string
+import json
+import http.client
 from pyrogram.errors import InputUserDeactivated, UserNotParticipant, FloodWait, UserIsBlocked, PeerIdInvalid                             
 from pyrogram.types import Message, InlineKeyboardButton
 from pyrogram import filters, enums
