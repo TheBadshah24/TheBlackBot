@@ -58,7 +58,7 @@ async def start():
             spec.loader.exec_module(load)
             sys.modules["plugins." + plugin_name] = load
             print("The Black Imported => " + plugin_name)
-     if ON_HEROKU:
+ #   if ON_HEROKU:
         asyncio.create_task(ping_server())
     b_users, b_chats = await db.get_banned()
     temp.BANNED_USERS = b_users
@@ -72,7 +72,7 @@ async def start():
     TheBlackBot.username = '@' + me.username
     logging.info(LOG_STR)
     tz = pytz.timezone('Asia/Kolkata')
-    today = date.today()
+   #today = date.today()
     now = datetime.now(tz)
     time = now.strftime("%H:%M:%S %p")
     await TheBlackBot.send_message(chat_id=LOG_CHANNEL, text=LOG_STR.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
