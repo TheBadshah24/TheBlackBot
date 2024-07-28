@@ -75,7 +75,7 @@ async def start():
    #today = date.today()
     now = datetime.now(tz)
     time = now.strftime("%H:%M:%S %p")
-    await TheBlackBot.send_message(chat_id=LOG_CHANNEL, text=LOG_STR.format(me.first_name, date, tame, __repo__, __version__, __license__, __copyright__))
+    await TheBlackBot.send_message(chat_id=LOG_CHANNEL, text=LOG_STR.format(me.first_name, date, time, __repo__, __version__, __license__, __copyright__))
     app = web.AppRunner(await web_server())
     await app.setup()
     bind_address = "0.0.0.0"
